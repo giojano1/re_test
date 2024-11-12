@@ -3,73 +3,81 @@ import AddCardButton from "@/components/addButton";
 import React, { useState, useEffect } from "react";
 import { Card } from "@/types";
 import { cn } from "@/lib/utils";
+
 export default function Home() {
-  const [cards, setCards] = useState<Card[]>(() => {
-    if (typeof window !== "undefined") {
-      const savedCards = localStorage.getItem("cards");
-      return savedCards ? JSON.parse(savedCards) : [];
-    }
-    return [];
-  });
-  // save cards to local storage
-  useEffect(() => {
-    localStorage.setItem("cards", JSON.stringify(cards));
-  }, [cards]);
+  const [cards, setCards] = useState<Card[] | null>(null);
   const [taskInputs, setTaskInputs] = useState<{ [key: number]: string }>({});
-  // remove card
+
+  useEffect(() => {
+    if (cards === null) {
+      const savedCards = localStorage.getItem("cards");
+      setCards(savedCards ? JSON.parse(savedCards) : []);
+    }
+  }, [cards]);
+
+  useEffect(() => {
+    if (cards !== null) {
+      localStorage.setItem("cards", JSON.stringify(cards));
+    }
+  }, [cards]);
+
   const handleRemoveCard = (id: number) => {
-    setCards((prevCards) => prevCards.filter((card) => card.id !== id));
+    setCards((prevCards) => prevCards?.filter((card) => card.id !== id) || []);
   };
-  // add task
+
   const handleAddTask = (id: number) => {
     const newTask = taskInputs[id]?.trim();
     if (newTask) {
-      setCards((prevCards) =>
-        prevCards.map((card) =>
-          card.id === id
-            ? {
-                ...card,
-                tasks: [
-                  ...card.tasks,
-                  { id: Date.now(), title: newTask, isComplete: false },
-                ],
-              }
-            : card
-        )
+      setCards(
+        (prevCards) =>
+          prevCards?.map((card) =>
+            card.id === id
+              ? {
+                  ...card,
+                  tasks: [
+                    ...card.tasks,
+                    { id: Date.now(), title: newTask, isComplete: false },
+                  ],
+                }
+              : card
+          ) || []
       );
-
       setTaskInputs((prevInputs) => ({ ...prevInputs, [id]: "" }));
     } else {
-      alert("input should not be empty");
+      alert("Input should not be empty");
     }
   };
-  // get input value
+
   const handleInputChange = (id: number, value: string) => {
     setTaskInputs((prevInputs) => ({ ...prevInputs, [id]: value }));
   };
-  // change task status
+
   const handleTaskStatusChange = (taskid: number) => {
-    setCards((prevCards) =>
-      prevCards.map((card) => ({
-        ...card,
-        tasks: card.tasks.map((task) =>
-          task.id === taskid ? { ...task, isComplete: !task.isComplete } : task
-        ),
-      }))
+    setCards(
+      (prevCards) =>
+        prevCards?.map((card) => ({
+          ...card,
+          tasks: card.tasks.map((task) =>
+            task.id === taskid
+              ? { ...task, isComplete: !task.isComplete }
+              : task
+          ),
+        })) || []
     );
   };
-  // remove task from card
+
   const handleTaskRemove = (id: number) => {
-    setCards((prevCards) =>
-      prevCards.map((card) => ({
-        ...card,
-        tasks: card.tasks.filter((task) => task.id !== id),
-      }))
+    setCards(
+      (prevCards) =>
+        prevCards?.map((card) => ({
+          ...card,
+          tasks: card.tasks.filter((task) => task.id !== id),
+        })) || []
     );
   };
-  //download tasks
+
   const handleDownloadTasks = (cardId: number) => {
-    const card = cards.find((c) => c.id === cardId);
+    const card = cards?.find((c) => c.id === cardId);
     if (card) {
       const cardTasksText = card.tasks
         .map((task) => `- ${task.title}`)
@@ -83,6 +91,8 @@ export default function Home() {
       link.click();
     }
   };
+
+  if (cards === null) return <div>Loading...</div>;
 
   return (
     <div>
@@ -133,7 +143,7 @@ export default function Home() {
                 {card.tasks.map((task) => (
                   <div
                     key={task.id}
-                    className="flex items-start justify-between text-black  "
+                    className="flex items-start justify-between text-black"
                   >
                     <input
                       onChange={() => handleTaskStatusChange(task.id)}

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/types";
 type btnProps = {
-  setCards: (cards: (prevCards: Card[]) => Card[]) => void;
+  setCards: React.Dispatch<React.SetStateAction<Card[] | null>>;
 };
 
 const AddCardButton = ({ setCards }: btnProps) => {
@@ -16,7 +16,8 @@ const AddCardButton = ({ setCards }: btnProps) => {
       bg: option,
       tasks: [],
     };
-    setCards((prevcards) => [...prevcards, newCard]);
+    setCards((prevCards) => (prevCards ? [...prevCards, newCard] : [newCard]));
+
     setShowOptions(false);
   };
   return (
