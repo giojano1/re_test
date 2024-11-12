@@ -9,20 +9,18 @@ export default function Home() {
     const savedCards = localStorage.getItem("cards");
     return savedCards ? JSON.parse(savedCards) : [];
   });
-
   const [taskInputs, setTaskInputs] = useState<{ [key: number]: string }>({});
-
+  // save cards to local storage
   useEffect(() => {
     localStorage.setItem("cards", JSON.stringify(cards));
   }, [cards]);
-
+  // remove card
   const handleRemoveCard = (id: number) => {
     setCards((prevCards) => prevCards.filter((card) => card.id !== id));
   };
-
+  // add task
   const handleAddTask = (id: number) => {
     const newTask = taskInputs[id]?.trim();
-    console.log(newTask);
     if (newTask) {
       setCards((prevCards) =>
         prevCards.map((card) =>
@@ -39,14 +37,25 @@ export default function Home() {
       );
 
       setTaskInputs((prevInputs) => ({ ...prevInputs, [id]: "" }));
+    } else {
+      alert("input should not be empty");
     }
   };
-
+  // get input value
   const handleInputChange = (id: number, value: string) => {
-    console.log(taskInputs);
     setTaskInputs((prevInputs) => ({ ...prevInputs, [id]: value }));
   };
-
+  // change task status
+  const handleTaskStatusChange = (taskid: number) => {
+    setCards((prevCards) =>
+      prevCards.map((card) => ({
+        ...card,
+        tasks: card.tasks.map((task) =>
+          task.id === taskid ? { ...task, isComplete: !task.isComplete } : task
+        ),
+      }))
+    );
+  };
   return (
     <div>
       <AddCardButton setCards={setCards} cards={cards} />
@@ -85,6 +94,29 @@ export default function Home() {
               >
                 Add
               </button>
+            </div>
+            <div className="my-5 flex flex-col gap-2">
+              {card.tasks.map((task) => (
+                <div
+                  key={task.id}
+                  className="flex items-start justify-between text-black  "
+                >
+                  <input
+                    onChange={() => handleTaskStatusChange(task.id)}
+                    type="checkbox"
+                    checked={task.isComplete}
+                  />
+                  <span
+                    className={cn(
+                      `text-black`,
+                      task.isComplete && "line-through"
+                    )}
+                  >
+                    {task.title}
+                  </span>
+                  <button className="font-bold text-red-500 text-xl">X</button>
+                </div>
+              ))}
             </div>
           </div>
         ))}
