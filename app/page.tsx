@@ -1,5 +1,11 @@
+"use client";
+import AddCardButton from "@/components/addButton";
 import React from "react";
 
 export default function Home() {
-  return <div>Home</div>;
+  return (
+    <div>
+      <AddCardButton />
+    </div>
+  );
 }
