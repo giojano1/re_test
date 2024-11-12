@@ -1,16 +1,31 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-const AddCardButton = () => {
+import { Card } from "@/types";
+type btnProps = {
+  setCards: (cards: (prevCards: Card[]) => Card[]) => void;
+  cards: Card[];
+};
+
+const AddCardButton = ({ setCards, cards }: btnProps) => {
   const buttonOptions = ["yellow", "green", "blue", "pink"];
   const [showOptions, setShowOptions] = useState<boolean>(false);
-  const handleShowOptions = {};
+
+  const handleAddCards = (option: string) => {
+    const newCard = {
+      id: Date.now(),
+      bg: option,
+    };
+    setCards((prevcards) => [...prevcards, newCard]);
+    setShowOptions(false);
+  };
   return (
     <div className="fixed bottom-4 right-4">
       {showOptions && (
         <div className="flex flex-col gap-2">
           {buttonOptions.map((btn) => (
             <button
+              onClick={() => handleAddCards(btn)}
               className={cn(
                 `w-14 h-14 rounded-full bg-black `,
                 btn === "yellow" && "bg-yellow-200",
