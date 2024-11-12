@@ -65,6 +65,23 @@ export default function Home() {
       }))
     );
   };
+  //download tasks
+
+  const handleDownloadTasks = (cardId: number) => {
+    const card = cards.find((c) => c.id === cardId);
+    if (card) {
+      const cardTasksText = card.tasks
+        .map((task) => `- ${task.title}`)
+        .join("\n");
+      const blob = new Blob([`Card ${cardId}:\n${cardTasksText}`], {
+        type: "text/plain",
+      });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${cardId}.txt`;
+      link.click();
+    }
+  };
   return (
     <div>
       <AddCardButton setCards={setCards} cards={cards} />
@@ -87,7 +104,12 @@ export default function Home() {
               >
                 X
               </button>
-              <button className="px-2 bg-blue-600 rounded-full">SAVE</button>
+              <button
+                onClick={() => handleDownloadTasks(card.id)}
+                className="px-2 bg-blue-600 rounded-full"
+              >
+                SAVE
+              </button>
             </div>
             <div className="flex items-center mt-6">
               <input
