@@ -56,6 +56,15 @@ export default function Home() {
       }))
     );
   };
+  // remove task from card
+  const handleTaskRemove = (id: number) => {
+    setCards((prevCards) =>
+      prevCards.map((card) => ({
+        ...card,
+        tasks: card.tasks.filter((task) => task.id !== id),
+      }))
+    );
+  };
   return (
     <div>
       <AddCardButton setCards={setCards} cards={cards} />
@@ -82,7 +91,7 @@ export default function Home() {
             </div>
             <div className="flex items-center mt-6">
               <input
-                className="flex-1 bg-white rounded-md px-2 h-10"
+                className="flex-1 bg-white rounded-md px-2 h-10 text-black"
                 placeholder="Type task"
                 type="text"
                 value={taskInputs[card.id] || ""}
@@ -114,7 +123,12 @@ export default function Home() {
                   >
                     {task.title}
                   </span>
-                  <button className="font-bold text-red-500 text-xl">X</button>
+                  <button
+                    onClick={() => handleTaskRemove(task.id)}
+                    className="font-bold text-red-500 text-xl"
+                  >
+                    X
+                  </button>
                 </div>
               ))}
             </div>
