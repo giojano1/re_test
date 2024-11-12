@@ -15,6 +15,7 @@ const AddCardButton = ({ setCards, cards }: btnProps) => {
     const newCard = {
       id: Date.now(),
       bg: option,
+      tasks: [],
     };
     setCards((prevcards) => [...prevcards, newCard]);
     setShowOptions(false);
@@ -25,6 +26,7 @@ const AddCardButton = ({ setCards, cards }: btnProps) => {
         <div className="flex flex-col gap-2">
           {buttonOptions.map((btn) => (
             <button
+              key={btn}
               onClick={() => handleAddCards(btn)}
               className={cn(
                 `w-14 h-14 rounded-full bg-black `,
