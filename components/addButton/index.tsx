@@ -1,13 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/types";
 type btnProps = {
   setCards: (cards: (prevCards: Card[]) => Card[]) => void;
-  cards: Card[];
 };
 
-const AddCardButton = ({ setCards, cards }: btnProps) => {
+const AddCardButton = ({ setCards }: btnProps) => {
   const buttonOptions = ["yellow", "green", "blue", "pink"];
   const [showOptions, setShowOptions] = useState<boolean>(false);
 
